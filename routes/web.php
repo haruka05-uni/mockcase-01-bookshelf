@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +14,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::middleware('auth')->group(function () {
+    Route::resource('books', BookController::class)
+        ->only(['create', 'store', 'edit', 'update', 'destroy']);
 });
+
+Route::resource('books', BookController::class)
+    ->only(['index', 'show']);
+
