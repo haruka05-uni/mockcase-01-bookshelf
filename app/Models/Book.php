@@ -26,8 +26,7 @@ class Book extends Model
 
     public function reviews()
     {
-        return $this->hasMany(Review::class)
-            ->withTimestamps();
+        return $this->hasMany(Review::class);
     }
 
     public function genres()
