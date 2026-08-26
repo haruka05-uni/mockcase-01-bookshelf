@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Requests\ReviewRequest;
+use App\Http\Requests\StoreReviewRequest;
+use App\Http\Requests\UpdateReviewRequest;
 use App\Models\Review;
 use App\Models\Book;
 use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
 {
-    public function store(ReviewRequest $request, Book $book)
+    public function store(StoreReviewRequest $request, Book $book)
     {
         $user = Auth::user();
 
@@ -35,7 +36,7 @@ class ReviewController extends Controller
         return view('reviews.edit', compact('review'));
     }
 
-    public function update(ReviewRequest $request, Review $review)
+    public function update(UpdateReviewRequest $request, Review $review)
     {
         $this->authorize('update', $review);
 
