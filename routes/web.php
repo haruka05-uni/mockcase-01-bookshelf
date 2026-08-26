@@ -7,16 +7,8 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\RankingController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+
+Route::redirect('/', '/books');
 
 Route::middleware('auth')->group(function () {
     //書籍関連
@@ -37,6 +29,8 @@ Route::middleware('auth')->group(function () {
         ->only(['index']);
 
     Route::post('/books/{book}/favorites', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
+
+    Route::post('/reviews/{review}/like', [ReviewController::class, 'like'])->name('reviews.like');
 });
 
 Route::resource('books', BookController::class)

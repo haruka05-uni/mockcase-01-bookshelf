@@ -12,7 +12,8 @@ class GenreController extends Controller
 {
     public function index()
     {
-        $genres = Genre::all();
+        $genres = Genre::withCount('books')->get();
+        ;
 
         return view('genres.index', compact('genres'));
     }
@@ -27,7 +28,7 @@ class GenreController extends Controller
         $validated = $request->validated();
         Genre::create($validated);
 
-        return redirect()->route('genres.index')->with('success', 'ジャンルを登録しました。');
+        return redirect()->route('genres.index')->with('success', 'ジャンルを作成しました。');
     }
 
     public function show(Genre $genre)
@@ -52,6 +53,10 @@ class GenreController extends Controller
 
     public function destroy(Genre $genre)
     {
+        if ($books = $genre->books()->exists()) {
+            return redirect()->route('genres.index')->with('error', '書籍に使用されているため削除できません。');
+        }
+
         $genre->delete();
 
         return redirect()->route('genres.index')->with('success', 'ジャンルを削除しました。');

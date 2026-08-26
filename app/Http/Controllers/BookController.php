@@ -61,11 +61,10 @@ class BookController extends Controller
      */
     public function show(Book $book)
     {
-        $books = Book::with('genres')
-            ->withCount('reviews')
-            ->get();
+        $book->load('genres');
+        $book->loadCount('reviews');
 
-        return view('books.show', compact('books'));
+        return view('books.show', compact('book'));
     }
 
     /**
@@ -99,7 +98,7 @@ class BookController extends Controller
 
         $book->genres()->sync($validated['genres']);
 
-        return redirect()->route('books.index')->with('success', '書籍を更新しました');
+        return redirect()->route('books.index')->with('success', '書籍情報を更新しました');
     }
 
     /**
