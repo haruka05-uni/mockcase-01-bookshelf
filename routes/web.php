@@ -37,6 +37,8 @@ Route::middleware('auth')->group(function () {
         ->only(['index']);
 
     Route::post('/books/{book}/favorites', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
+
+    Route::post('/reviews/{review}/like', [ReviewController::class, 'like'])->name('reviews.like');
 });
 
 Route::resource('books', BookController::class)
