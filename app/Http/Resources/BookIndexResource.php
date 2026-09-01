@@ -15,11 +15,9 @@ class BookIndexResource extends JsonResource
             'author' => $this->author,
             'isbn' => $this->isbn,
             'published_date' => $this->published_date,
-            'description' => $this->description,
-            'image_url' => $this->image_url,
             'genres' => GenreResource::collection($this->whenLoaded('genres')),
-            'average_rating' => $this->reviews_avg_rating,
-            'reviews_count' => $this->reviews_count,
+            'average_rating' => (float) $this->reviews_avg_rating,
+            'review_count' => $this->reviews_count,
         ];
     }
 }

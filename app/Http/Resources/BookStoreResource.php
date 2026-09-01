@@ -9,6 +9,15 @@ class BookStoreResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'author' => $this->author,
+            'isbn' => $this->isbn,
+            'published_date' => $this->published_date,
+            'description' => $this->description,
+            'image_url' => $this->image_url,
+            'genres' => GenreResource::collection($this->whenLoaded('genres')),
+        ];
     }
 }

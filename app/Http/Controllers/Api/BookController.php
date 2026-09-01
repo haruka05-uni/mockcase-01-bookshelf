@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Requests\API\BookIndexRequest;
-use App\Http\Requests\API\BookStoreRequest;
+use App\Http\Requests\Api\BookIndexRequest;
+use App\Http\Requests\Api\BookStoreRequest;
 use App\Models\Book;
-use App\Http\Resources\BookIndexResource;
+use App\Http\Resources\BookIndexCollection;
 use App\Http\Resources\BookShowResource;
+use App\Http\Resources\BookIndexResource;
 use App\Http\Resources\BookStoreResource;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\Api\BookUpdateRequest;
 
 class BookController extends Controller
 {
@@ -30,7 +33,7 @@ class BookController extends Controller
 
         if (!empty($validated['genres'])) {
             $query->whereHas('genres', function ($query) use ($validated) {
-                $query->where('id', $validated['genres']);
+                $query->where('genres.id', $validated['genres']);
             });
         }
 
@@ -38,16 +41,15 @@ class BookController extends Controller
 
         $bookIndex = $query->paginate($perPage);
 
-        return BookIndexResource::collection($bookIndex);
+        return new BookIndexCollection($bookIndex);
     }
 
     public function store(BookStoreRequest $request)
     {
         $validated = $request->validated();
-        $user = Auth::user();
 
         $book = Book::create([
-            'user_id' => $user->id,
+            'user_id' => $validated['user_id'],
             'title' => $validated['title'],
             'author' => $validated['author'],
             'isbn' => $validated['isbn'],
@@ -57,6 +59,8 @@ class BookController extends Controller
         ]);
 
         $book->genres()->attach($validated['genres']);
+
+        $book->load('genres');
 
         return (new BookStoreResource($book))
             ->response()
@@ -70,9 +74,24 @@ class BookController extends Controller
         return new BookShowResource($book);
     }
 
-    public function update(Request $request, string $id)
+    public function update(BookUpdateRequest $request, Book $book)
     {
-        //
+        $validated = $request->validated();
+
+        $genres = $validated['genres'] ?? [];
+
+        unset($validated['genres']);
+
+        $book->update($validated);
+
+        $book->genres()->sync($genres);
+
+        $book->load('genres');
+
+        return (new BookStoreResource($book))
+            ->response()
+            ->setStatusCode(200);
+
     }
 
     public function destroy(book $book)
