@@ -53,7 +53,7 @@ class BookController extends Controller
 
         $book->genres()->attach($validated['genres']);
 
-        return redirect()->route('books.create')->with('success', '書籍を登録しました');
+        return redirect()->route('books.index')->with('success', '書籍を登録しました');
     }
 
     /**
