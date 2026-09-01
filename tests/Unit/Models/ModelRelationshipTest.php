@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\Book;
 use App\Models\Genre;
@@ -11,6 +12,9 @@ use Illuminate\Support\Facades\Hash;
 
 class ModelRelationshipTest extends TestCase
 {
+
+    use RefreshDatabase;
+
     //Book関係
     //1つの書籍は、1人の登録ユーザーに紐づくこと。（belongsTo）
     public function test_book_belongs_to_user(): void
@@ -21,7 +25,7 @@ class ModelRelationshipTest extends TestCase
             'password' => Hash::make('password'),
         ]);
 
-        $book = Book::Create([
+        $book = Book::create([
             'user_id' => $user->id,
             'title' => '吾輩は猫である',
             'author' => '夏目漱石',
@@ -79,7 +83,14 @@ class ModelRelationshipTest extends TestCase
     //1つの書籍に複数のジャンルが紐づくこと。（belongsToMany）
     public function test_book_belongs_to_many_genres(): void
     {
+        $user = User::create([
+            'name' => '山田太郎',
+            'email' => 'yamada@example.com',
+            'password' => Hash::make('password'),
+        ]);
+
         $book = Book::create([
+            'user_id' => $user->id,
             'title' => '吾輩は猫である',
             'author' => '夏目漱石',
             'isbn' => '9784101010014',
@@ -162,7 +173,7 @@ class ModelRelationshipTest extends TestCase
             'description' => '猫の視点から人間社会を風刺的に描いた夏目漱石の代表的な小説。',
         ]);
 
-        $book2 = Book::Create([
+        $book2 = Book::create([
             'user_id' => $user->id,
             'title' => '人を動かす',
             'author' => 'D・カーネギー',
@@ -184,7 +195,7 @@ class ModelRelationshipTest extends TestCase
             'password' => Hash::make('password'),
         ]);
 
-        $book = Book::Create([
+        $book = Book::create([
             'user_id' => $user->id,
             'title' => '吾輩は猫である',
             'author' => '夏目漱石',
@@ -241,7 +252,7 @@ class ModelRelationshipTest extends TestCase
             'description' => '猫の視点から人間社会を風刺的に描いた夏目漱石の代表的な小説。',
         ]);
 
-        $book2 = Book::Create([
+        $book2 = Book::create([
             'user_id' => $user1->id,
             'title' => '人を動かす',
             'author' => 'D・カーネギー',
