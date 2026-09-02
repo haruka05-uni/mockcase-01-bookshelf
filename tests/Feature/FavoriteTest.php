@@ -43,7 +43,7 @@ class FavoriteTest extends TestCase
     }
 
     //お気に入り解除
-    //認証ユーザーがお気に入りを追加でき、favoritesテーブルにレコードが作成されること。
+    //認証ユーザーがお気に入りを追加でき、favoritesテーブルからレコードが削除されること。
     public function test_authenticated_user_can_remove_book_from_favorites(): void
     {
         $user = User::create([

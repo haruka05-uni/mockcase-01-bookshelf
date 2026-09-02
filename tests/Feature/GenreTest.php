@@ -190,7 +190,7 @@ class GenreTest extends TestCase
         $response = $this->delete('/genres/' . $genre->id);
         $response->assertSessionHas(
             'error',
-            '書籍に使用されているため削除できません。'
+            'このジャンルには書籍が紐付いているため削除できません。'
         );
 
         $this->assertDatabaseHas('genres', [
