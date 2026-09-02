@@ -34,4 +34,9 @@ class Book extends Model
         return $this->belongsToMany(Genre::class);
     }
 
+    public function favoritedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'favorites')
+            ->withTimestamps();
+    }
 }
