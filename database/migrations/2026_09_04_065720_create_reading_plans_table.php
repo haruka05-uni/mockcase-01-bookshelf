@@ -10,24 +10,28 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('books', function (Blueprint $table) {
+        Schema::create('reading_plans', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('title');
-            $table->string('author');
-            $table->string('isbn', 13)->unique()->nullable();
-            $table->date('published_date')->nullable();
-            $table->text('description')->nullable();
-            $table->string('image_url')->nullable();
+            $table->foreignId('book_id')->constrained()->onDelete('cascade');
+            $table->date('target_date');
+            $table->enum('status', [
+                'not_started',
+                'in_progress',
+                'completed',
+            ])->default('not_started');
+            $table->date('completed_at')->nullable();
             $table->timestamps();
         });
     }
+
+
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('books');
+        Schema::dropIfExists('reading_plans');
     }
 };
