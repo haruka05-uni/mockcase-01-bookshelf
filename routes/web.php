@@ -6,6 +6,7 @@ use App\Http\Controllers\GenreController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\RankingController;
+use App\Http\Controllers\ReadingPlanController;
 
 
 Route::redirect('/', '/books');
@@ -31,6 +32,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/books/{book}/favorites', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
 
     Route::post('/reviews/{review}/like', [ReviewController::class, 'like'])->name('reviews.like');
+
+    //書籍計画関連
+    Route::resource('reading-Plans', ReadingPlanController::class);
 });
 
 Route::resource('books', BookController::class)
