@@ -2,20 +2,19 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 use App\Models\Book;
 use App\Models\Genre;
-
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
+use Tests\TestCase;
 
 class GenreTest extends TestCase
 {
     use RefreshDatabase;
 
-    //ジャンル一覧
-    //ジャンル一覧ページが正常に表示されること。
+    // ジャンル一覧
+    // ジャンル一覧ページが正常に表示されること。
     public function test_genres_index_can_be_accessed(): void
     {
         $user = User::create([
@@ -30,8 +29,8 @@ class GenreTest extends TestCase
         $response->assertStatus(200);
     }
 
-    //ジャンル登録フォーム
-    //認証ユーザーがジャンル登録フォーム（/genres/create）を表示できること。
+    // ジャンル登録フォーム
+    // 認証ユーザーがジャンル登録フォーム（/genres/create）を表示できること。
     public function test_authenticated_user_review_create_form_can_be_accessed(): void
     {
         $user = User::create([
@@ -46,8 +45,8 @@ class GenreTest extends TestCase
         $response->assertStatus(200);
     }
 
-    //ジャンル登録
-    //認証ユーザーがジャンルを作成でき、genresテーブルにレコードが作成されること。
+    // ジャンル登録
+    // 認証ユーザーがジャンルを作成でき、genresテーブルにレコードが作成されること。
     public function test_authenticated_user_can_create_genre(): void
     {
         $user = User::create([
@@ -69,8 +68,8 @@ class GenreTest extends TestCase
         ]);
     }
 
-    //ジャンル登録
-    //バリデーションエラー時は適切にエラーが返されること。
+    // ジャンル登録
+    // バリデーションエラー時は適切にエラーが返されること。
     public function test_genre_creation_validation_errors(): void
     {
         $user = User::create([
@@ -93,8 +92,8 @@ class GenreTest extends TestCase
         ]);
     }
 
-    //ジャンル詳細
-    //ジャンル詳細ページ（/genres/{genre}）でジャンルに紐づく書籍タイトルが表示されること。
+    // ジャンル詳細
+    // ジャンル詳細ページ（/genres/{genre}）でジャンルに紐づく書籍タイトルが表示されること。
     public function test_genre_show_displays_related_book_title(): void
     {
         $user = User::create([
@@ -120,12 +119,12 @@ class GenreTest extends TestCase
 
         $this->actingAs($user);
 
-        $response = $this->get('/genres/' . $genre->id);
+        $response = $this->get('/genres/'.$genre->id);
         $response->assertSee('吾輩は猫である');
     }
 
-    //ジャンル編集
-    //認証ユーザーがジャンル名を更新でき、genresテーブルのレコードが更新されること。
+    // ジャンル編集
+    // 認証ユーザーがジャンル名を更新でき、genresテーブルのレコードが更新されること。
     public function test_authenticated_user_can_update_genre(): void
     {
         $user = User::create([
@@ -135,19 +134,19 @@ class GenreTest extends TestCase
         ]);
 
         $genre = Genre::create([
-            'name' => '小説'
+            'name' => '小説',
         ]);
 
         $this->actingAs($user);
 
-        $response = $this->get('/genres/' . $genre->id . '/edit');
+        $response = $this->get('/genres/'.$genre->id.'/edit');
         $response->assertStatus(200);
 
         $updatedGenre = [
-            'name' => 'ビジネス'
+            'name' => 'ビジネス',
         ];
 
-        $response = $this->put('/genres/' . $genre->id, $updatedGenre);
+        $response = $this->put('/genres/'.$genre->id, $updatedGenre);
         $response->assertRedirect('/genres');
 
         $this->assertDatabaseMissing('genres', [
@@ -160,8 +159,8 @@ class GenreTest extends TestCase
 
     }
 
-    //ジャンル削除制約
-    //書籍が紐付いているジャンルは削除できず、エラーメッセージが表示されること。
+    // ジャンル削除制約
+    // 書籍が紐付いているジャンルは削除できず、エラーメッセージが表示されること。
     public function test_genre_with_books_cannot_be_deleted(): void
     {
         $user = User::create([
@@ -187,7 +186,7 @@ class GenreTest extends TestCase
 
         $this->actingAs($user);
 
-        $response = $this->delete('/genres/' . $genre->id);
+        $response = $this->delete('/genres/'.$genre->id);
         $response->assertSessionHas(
             'error',
             'このジャンルには書籍が紐付いているため削除できません。'
@@ -198,8 +197,8 @@ class GenreTest extends TestCase
         ]);
     }
 
-    //ジャンル削除制約
-    //紐付きがないジャンルは正常に削除できること。
+    // ジャンル削除制約
+    // 紐付きがないジャンルは正常に削除できること。
     public function test_genre_without_books_can_be_deleted(): void
     {
         $user = User::create([
@@ -214,12 +213,11 @@ class GenreTest extends TestCase
 
         $this->actingAs($user);
 
-        $response = $this->delete('/genres/' . $genre->id);
+        $response = $this->delete('/genres/'.$genre->id);
 
         $this->assertDatabaseMissing('genres', [
             'id' => $genre->id,
             'name' => '小説',
         ]);
     }
-
 }

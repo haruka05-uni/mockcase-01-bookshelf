@@ -2,19 +2,18 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 use App\Models\Book;
-
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
+use Tests\TestCase;
 
 class FavoriteTest extends TestCase
 {
     use RefreshDatabase;
 
-    //お気に入り追加
-    //認証ユーザーがお気に入りを追加でき、favoritesテーブルにレコードが作成されること。
+    // お気に入り追加
+    // 認証ユーザーがお気に入りを追加でき、favoritesテーブルにレコードが作成されること。
     public function test_authenticated_user_can_add_book_to_favorites(): void
     {
         $user = User::create([
@@ -34,7 +33,7 @@ class FavoriteTest extends TestCase
 
         $this->actingAs($user);
 
-        $response = $this->post('/books/' . $book->id . '/favorites');
+        $response = $this->post('/books/'.$book->id.'/favorites');
 
         $this->assertDatabaseHas('favorites', [
             'book_id' => $book->id,
@@ -42,8 +41,8 @@ class FavoriteTest extends TestCase
         ]);
     }
 
-    //お気に入り解除
-    //認証ユーザーがお気に入りを追加でき、favoritesテーブルからレコードが削除されること。
+    // お気に入り解除
+    // 認証ユーザーがお気に入りを追加でき、favoritesテーブルからレコードが削除されること。
     public function test_authenticated_user_can_remove_book_from_favorites(): void
     {
         $user = User::create([
@@ -64,7 +63,7 @@ class FavoriteTest extends TestCase
         $this->actingAs($user);
         $book->favoritedByUsers()->attach($user->id);
 
-        $this->post('/books/' . $book->id . '/favorites');
+        $this->post('/books/'.$book->id.'/favorites');
 
         $this->assertDatabaseMissing('favorites', [
             'book_id' => $book->id,
@@ -72,8 +71,8 @@ class FavoriteTest extends TestCase
         ]);
     }
 
-    //お気に入りトグル
-    //お気に入りのトグル（追加→解除→追加）が正しく動作すること。
+    // お気に入りトグル
+    // お気に入りのトグル（追加→解除→追加）が正しく動作すること。
     public function test_authenticated_user_can_toggle_book_favorite(): void
     {
         $user = User::create([
@@ -93,21 +92,21 @@ class FavoriteTest extends TestCase
 
         $this->actingAs($user);
 
-        $this->post('/books/' . $book->id . '/favorites');
+        $this->post('/books/'.$book->id.'/favorites');
 
         $this->assertDatabaseHas('favorites', [
             'book_id' => $book->id,
             'user_id' => $user->id,
         ]);
 
-        $this->post('/books/' . $book->id . '/favorites');
+        $this->post('/books/'.$book->id.'/favorites');
 
         $this->assertDatabaseMissing('favorites', [
             'book_id' => $book->id,
             'user_id' => $user->id,
         ]);
 
-        $this->post('/books/' . $book->id . '/favorites');
+        $this->post('/books/'.$book->id.'/favorites');
 
         $this->assertDatabaseHas('favorites', [
             'book_id' => $book->id,
@@ -115,8 +114,8 @@ class FavoriteTest extends TestCase
         ]);
     }
 
-    //お気に入り一覧
-    //お気に入り一覧ページが正常に表示されること。
+    // お気に入り一覧
+    // お気に入り一覧ページが正常に表示されること。
     public function test_favorites_index_can_be_accessed(): void
     {
         $user = User::create([
@@ -131,8 +130,8 @@ class FavoriteTest extends TestCase
         $response->assertStatus(200);
     }
 
-    //ゲスト制限
-    //ゲストがお気に入り操作を行うとログインにリダイレクトされること。
+    // ゲスト制限
+    // ゲストがお気に入り操作を行うとログインにリダイレクトされること。
     public function test_guest_is_redirected_to_login_when_toggling_favorite(): void
     {
         $user = User::create([
@@ -150,7 +149,7 @@ class FavoriteTest extends TestCase
             'description' => '猫の視点から人間社会を風刺的に描いた夏目漱石の代表的な小説。',
         ]);
 
-        $response = $this->post('/books/' . $book->id . '/favorites');
+        $response = $this->post('/books/'.$book->id.'/favorites');
         $response->assertRedirect('/login');
     }
 }

@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\User;
 use App\Models\Book;
 use App\Models\Genre;
+use App\Models\User;
+use Illuminate\Database\Seeder;
 
 class BookSeeder extends Seeder
 {
@@ -14,7 +14,7 @@ class BookSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = User::first();
+        $users = User::all();
 
         $books = [
             [
@@ -111,12 +111,12 @@ class BookSeeder extends Seeder
             $createdBook = Book::firstOrCreate(
                 ['isbn' => $book['isbn']],
                 [
-                    'user_id' => $user->id,
+                    'user_id' => $users->random()->id,
                     'title' => $book['title'],
                     'author' => $book['author'],
                     'published_date' => $book['published_date'],
                     'description' => $book['description'],
-                    'image_url' => 'https://placehold.co/200x300/e2e8f0/475569?text=' . ($index + 1),
+                    'image_url' => 'https://placehold.co/200x300/e2e8f0/475569?text='.($index + 1),
                 ]
             );
 

@@ -3,16 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Http\Requests\Api\BookIndexRequest;
 use App\Http\Requests\Api\BookStoreRequest;
-use App\Models\Book;
+use App\Http\Requests\Api\BookUpdateRequest;
 use App\Http\Resources\BookIndexCollection;
 use App\Http\Resources\BookShowResource;
-use App\Http\Resources\BookIndexResource;
 use App\Http\Resources\BookStoreResource;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\Api\BookUpdateRequest;
+use App\Models\Book;
 
 class BookController extends Controller
 {
@@ -24,14 +21,14 @@ class BookController extends Controller
             ->withAvg('reviews', 'rating')
             ->withCount('reviews');
 
-        if (!empty($validated['keyword'])) {
+        if (! empty($validated['keyword'])) {
             $query->where(function ($query) use ($validated) {
-                $query->where('title', 'like', '%' . $validated['keyword'] . '%')
-                    ->orwhere('author', 'like', '%' . $validated['keyword'] . '%');
+                $query->where('title', 'like', '%'.$validated['keyword'].'%')
+                    ->orwhere('author', 'like', '%'.$validated['keyword'].'%');
             });
         }
 
-        if (!empty($validated['genres'])) {
+        if (! empty($validated['genres'])) {
             $query->whereHas('genres', function ($query) use ($validated) {
                 $query->where('genres.id', $validated['genres']);
             });
@@ -49,7 +46,7 @@ class BookController extends Controller
         $validated = $request->validated();
 
         $book = Book::create([
-            'user_id' => $validated['user_id'],
+            'user_id' => $request->user()->id,
             'title' => $validated['title'],
             'author' => $validated['author'],
             'isbn' => $validated['isbn'],
@@ -76,6 +73,8 @@ class BookController extends Controller
 
     public function update(BookUpdateRequest $request, Book $book)
     {
+        $this->authorize('update', $book);
+
         $validated = $request->validated();
 
         $genres = $validated['genres'] ?? [];
@@ -94,8 +93,10 @@ class BookController extends Controller
 
     }
 
-    public function destroy(book $book)
+    public function destroy(Book $book)
     {
+        $this->authorize('delete', $book);
+
         $book->delete();
 
         return response()->json(null, 204);

@@ -2,19 +2,20 @@
 
 namespace Tests\Feature\Api;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-use Illuminate\Support\Facades\Hash;
 use App\Models\Book;
 use App\Models\Genre;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\Sanctum;
+use Tests\TestCase;
 
 class BookApiTest extends TestCase
 {
     use RefreshDatabase;
 
-    //公開API GET（一覧/詳細）
-    //GET /api/v1/books が正しいJSON（data + meta）を返すこと。
+    // 公開API GET（一覧/詳細）
+    // GET /api/v1/books が正しいJSON（data + meta）を返すこと。
     public function test_books_index_returns_correct_json_structure(): void
     {
         $genre = Genre::create([
@@ -75,7 +76,7 @@ class BookApiTest extends TestCase
         ]);
     }
 
-    //公開API GET（一覧/詳細）
+    // 公開API GET（一覧/詳細）
     // GET /api/v1/books/{book} が正しいJSON（data + meta）を返すこと。
     public function test_book_show_returns_correct_json_structure(): void
     {
@@ -100,7 +101,7 @@ class BookApiTest extends TestCase
 
         $book->genres()->attach($genre->id);
 
-        $response = $this->getJson('/api/v1/books/' . $book->id);
+        $response = $this->getJson('/api/v1/books/'.$book->id);
 
         $response->assertOk();
 
@@ -132,8 +133,8 @@ class BookApiTest extends TestCase
         ]);
     }
 
-    //公開API POST（作成）
-    //POST /api/v1/books で正常データを送信したとき201が返り、booksテーブルとbook_genreテーブルにレコードが作成されること。
+    // 公開API POST（作成）
+    // POST /api/v1/books で正常データを送信したとき201が返り、booksテーブルとbook_genreテーブルにレコードが作成されること。
 
     public function test_books_create_returns_201(): void
     {
@@ -157,6 +158,8 @@ class BookApiTest extends TestCase
             'genres' => [$genre->id],
         ];
 
+        Sanctum::actingAs($user);
+
         $response = $this->postJson('/api/v1/books', $bookData);
         $book = Book::first();
 
@@ -173,8 +176,8 @@ class BookApiTest extends TestCase
         ]);
     }
 
-    //公開API POST（作成）
-    //POST /api/v1/books でバリデーションエラー時に422とエラーメッセージが返ること。
+    // 公開API POST（作成）
+    // POST /api/v1/books でバリデーションエラー時に422とエラーメッセージが返ること。
 
     public function test_books_create_returns_422(): void
     {
@@ -194,6 +197,8 @@ class BookApiTest extends TestCase
             'genres' => [],
         ];
 
+        Sanctum::actingAs($user);
+
         $response = $this->postJson('/api/v1/books', $bookData);
 
         $response->assertStatus(422);
@@ -210,8 +215,8 @@ class BookApiTest extends TestCase
         ]);
     }
 
-    //公開API PUT（更新）
-    //PUT /api/v1/books/{book} で正しいデータを送信したとき200が返り、更新内容がDBに反映されること。
+    // 公開API PUT（更新）
+    // PUT /api/v1/books/{book} で正しいデータを送信したとき200が返り、更新内容がDBに反映されること。
 
     public function test_books_update_returns_200(): void
     {
@@ -234,6 +239,8 @@ class BookApiTest extends TestCase
             'description' => '猫の視点から人間社会を風刺的に描いた夏目漱石の代表的な小説。',
         ]);
 
+        Sanctum::actingAs($user);
+
         $book->genres()->attach($genre->id);
 
         $updateBookData = [
@@ -246,7 +253,7 @@ class BookApiTest extends TestCase
             'genres' => [$genre->id],
         ];
 
-        $response = $this->putJson('/api/v1/books/' . $book->id, $updateBookData);
+        $response = $this->putJson('/api/v1/books/'.$book->id, $updateBookData);
 
         $response->assertStatus(200);
 
@@ -262,14 +269,21 @@ class BookApiTest extends TestCase
     // 存在しないIDで404が返ること。
     public function test_books_update_not_found_returns_404(): void
     {
+        $user = User::create([
+            'name' => '山田太郎',
+            'email' => 'yamada@example.com',
+            'password' => Hash::make('password'),
+        ]);
+
+        Sanctum::actingAs($user);
+
         $response = $this->putJson('/api/v1/books/99');
 
         $response->assertStatus(404);
     }
 
-
-    //公開API DELETE（削除）
-    //DELETE /api/v1/books/{book} で書籍を削除したとき204が返り、booksテーブルから該当レコードが削除されること。
+    // 公開API DELETE（削除）
+    // DELETE /api/v1/books/{book} で書籍を削除したとき204が返り、booksテーブルから該当レコードが削除されること。
 
     public function test_books_delete_returns_204(): void
     {
@@ -292,9 +306,11 @@ class BookApiTest extends TestCase
             'description' => '猫の視点から人間社会を風刺的に描いた夏目漱石の代表的な小説。',
         ]);
 
+        Sanctum::actingAs($user);
+
         $book->genres()->attach($genre->id);
 
-        $response = $this->deleteJson('/api/v1/books/' . $book->id);
+        $response = $this->deleteJson('/api/v1/books/'.$book->id);
 
         $response->assertStatus(204);
 
@@ -308,6 +324,14 @@ class BookApiTest extends TestCase
     // 存在しないIDで404が返ること。
     public function test_books_delete_not_found_returns_404(): void
     {
+        $user = User::create([
+            'name' => '山田太郎',
+            'email' => 'yamada@example.com',
+            'password' => Hash::make('password'),
+        ]);
+
+        Sanctum::actingAs($user);
+
         $response = $this->deleteJson('/api/v1/books/99');
 
         $response->assertStatus(404);

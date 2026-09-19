@@ -2,21 +2,20 @@
 
 namespace Tests\Unit;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use App\Models\Book;
 use App\Models\Genre;
-use App\Models\User;
 use App\Models\Review;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Tests\TestCase;
 
 class ModelRelationshipTest extends TestCase
 {
-
     use RefreshDatabase;
 
-    //Book関係
-    //1つの書籍は、1人の登録ユーザーに紐づくこと。（belongsTo）
+    // Book関係
+    // 1つの書籍は、1人の登録ユーザーに紐づくこと。（belongsTo）
     public function test_book_belongs_to_user(): void
     {
         $user = User::create([
@@ -41,9 +40,9 @@ class ModelRelationshipTest extends TestCase
 
     }
 
-    //Book関係
-    //1つの書籍から、紐づく複数のレビューが正しく取得できること。（hasMany）
-    public function test_book_has_Many_reviews(): void
+    // Book関係
+    // 1つの書籍から、紐づく複数のレビューが正しく取得できること。（hasMany）
+    public function test_book_has_many_reviews(): void
     {
         $user = User::create([
             'name' => '山田太郎',
@@ -78,9 +77,8 @@ class ModelRelationshipTest extends TestCase
 
     }
 
-
-    //Book関係
-    //1つの書籍に複数のジャンルが紐づくこと。（belongsToMany）
+    // Book関係
+    // 1つの書籍に複数のジャンルが紐づくこと。（belongsToMany）
     public function test_book_belongs_to_many_genres(): void
     {
         $user = User::create([
@@ -108,16 +106,15 @@ class ModelRelationshipTest extends TestCase
 
         $book->genres()->attach([
             $genre1->id,
-            $genre2->id
+            $genre2->id,
         ]);
 
         $this->assertCount(2, $book->genres);
     }
 
-
-    //Book関係
-    //1つの書籍は複数のユーザーにお気に入り書籍として紐づくこと。（belongsToMany）
-    public function test_book_belongs_to_many_favoritedByUsers(): void
+    // Book関係
+    // 1つの書籍は複数のユーザーにお気に入り書籍として紐づくこと。（belongsToMany）
+    public function test_book_belongs_to_many_favorited_by_users(): void
     {
         $user = User::create([
             'name' => '田中一郎',
@@ -154,8 +151,8 @@ class ModelRelationshipTest extends TestCase
         $this->assertCount(2, $book->favoritedByUsers);
     }
 
-    //User関係
-    //1人のユーザーから、自身の登録した複数の書籍を取得できること。（hasMany）
+    // User関係
+    // 1人のユーザーから、自身の登録した複数の書籍を取得できること。（hasMany）
     public function test_user_has_many_books(): void
     {
         $user = User::create([
@@ -185,8 +182,8 @@ class ModelRelationshipTest extends TestCase
         $this->assertCount(2, $user->books);
     }
 
-    //User関係
-    //1人のユーザーから、自身の投稿した複数のレビューを取得できること。（hasMany）
+    // User関係
+    // 1人のユーザーから、自身の投稿した複数のレビューを取得できること。（hasMany）
     public function test_user_has_many_reviews(): void
     {
         $user = User::create([
@@ -227,9 +224,9 @@ class ModelRelationshipTest extends TestCase
         $this->assertCount(2, $user1->reviews);
     }
 
-    //User関係
-    //1人のユーザーに複数の書籍がお気に入りとして紐づくこと。（belongsToMany）
-    public function test_user_belongs_to_many_favoriteBooks(): void
+    // User関係
+    // 1人のユーザーに複数の書籍がお気に入りとして紐づくこと。（belongsToMany）
+    public function test_user_belongs_to_many_favorite_books(): void
     {
         $user = User::create([
             'name' => '田中一郎',
@@ -269,9 +266,9 @@ class ModelRelationshipTest extends TestCase
         $this->assertCount(2, $user->favoriteBooks);
     }
 
-    //User関係
-    //1人のユーザーに複数のレビューがいいねとして紐づくこと。（belongsToMany）
-    public function test_user_belongs_to_many_likedReviews(): void
+    // User関係
+    // 1人のユーザーに複数のレビューがいいねとして紐づくこと。（belongsToMany）
+    public function test_user_belongs_to_many_liked_reviews(): void
     {
         $user = User::create([
             'name' => '田中一郎',
@@ -331,8 +328,8 @@ class ModelRelationshipTest extends TestCase
         $this->assertCount(2, $liker->likedReviews);
     }
 
-    //Review関係
-    //1つのレビューは、1つの投稿ユーザーに紐づく。（belongsTo）
+    // Review関係
+    // 1つのレビューは、1つの投稿ユーザーに紐づく。（belongsTo）
     public function test_review_belongs_to_user(): void
     {
         $user = User::create([
@@ -364,8 +361,8 @@ class ModelRelationshipTest extends TestCase
 
     }
 
-    //Review関係
-    //1つのレビューは、1つの書籍に紐づく。（belongsTo）
+    // Review関係
+    // 1つのレビューは、1つの書籍に紐づく。（belongsTo）
     public function test_review_belongs_to_book(): void
     {
         $user = User::create([
@@ -397,9 +394,9 @@ class ModelRelationshipTest extends TestCase
 
     }
 
-    //Review関係
-    //1つのレビューには複数のユーザーのいいねが紐づいている。（belongsToMany）
-    public function test_review_belongs_to_many_likedByUsers(): void
+    // Review関係
+    // 1つのレビューには複数のユーザーのいいねが紐づいている。（belongsToMany）
+    public function test_review_belongs_to_many_liked_by_users(): void
     {
         $user = User::create([
             'name' => '佐藤美咲',

@@ -15,13 +15,12 @@ class BookUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|integer|exists:users,id',
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
             'isbn' => [
                 'required',
                 'digits:13',
-                Rule::unique('books', 'isbn')->ignore($this->route('book'))
+                Rule::unique('books', 'isbn')->ignore($this->route('book')),
             ],
             'published_date' => 'required|date',
             'description' => 'nullable|string|max:255',

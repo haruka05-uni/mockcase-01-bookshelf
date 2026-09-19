@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Requests\StoreReviewRequest;
 use App\Http\Requests\UpdateReviewRequest;
-use App\Models\Review;
 use App\Models\Book;
+use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
