@@ -2,18 +2,17 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
+use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
 {
     use RefreshDatabase;
 
-    //認証済みリダイレクト
-    //認証済みユーザーがログインページにアクセスした場合、ホームにリダイレクトされること。
+    // 認証済みリダイレクト
+    // 認証済みユーザーがログインページにアクセスした場合、ホームにリダイレクトされること。
     public function test_authenticated_user_is_redirected_from_login_page(): void
     {
         $user = User::create([
@@ -28,8 +27,8 @@ class AuthenticationTest extends TestCase
         $response->assertRedirect('/books');
     }
 
-    //認証済みリダイレクト
-    //ゲストはアクセス可能であること。
+    // 認証済みリダイレクト
+    // ゲストはアクセス可能であること。
     public function test_guest_can_access_login_page(): void
     {
         $response = $this->get('/login');

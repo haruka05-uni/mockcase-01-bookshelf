@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Book;
-use App\Models\Genre;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
+use App\Models\Book;
+use App\Models\Genre;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
@@ -28,14 +28,14 @@ class BookController extends Controller
             'sort' => 'nullable|in:newest,oldest,title,rating',
         ]);
 
-        if (!empty($validated['keyword'])) {
+        if (! empty($validated['keyword'])) {
             $query->where(function ($query) use ($validated) {
-                $query->where('title', 'like', '%' . $validated['keyword'] . '%')
-                    ->orWhere('author', 'like', '%' . $validated['keyword'] . '%');
+                $query->where('title', 'like', '%'.$validated['keyword'].'%')
+                    ->orWhere('author', 'like', '%'.$validated['keyword'].'%');
             });
         }
 
-        if (!empty($validated['genre'])) {
+        if (! empty($validated['genre'])) {
             $query->whereHas('genres', function ($query) use ($validated) {
                 $query->where('genres.id', $validated['genre']);
             });
@@ -74,9 +74,9 @@ class BookController extends Controller
     public function isbnSearch($isbn)
     {
         // ISBNが13桁の数字かチェック
-        if (!preg_match('/^\d{13}$/', $isbn)) {
+        if (! preg_match('/^\d{13}$/', $isbn)) {
             return response()->json([
-                'error' => 'ISBNは13桁で入力してください。'
+                'error' => 'ISBNは13桁で入力してください。',
             ], 400);
         }
 
@@ -84,7 +84,7 @@ class BookController extends Controller
             $response = Http::get(
                 'https://www.googleapis.com/books/v1/volumes',
                 [
-                    'q' => 'isbn:' . $isbn,
+                    'q' => 'isbn:'.$isbn,
                     'key' => config('services.google_books.api_key'),
                 ]
             );
@@ -92,14 +92,14 @@ class BookController extends Controller
             // クォータ超過
             if ($response->status() === 429) {
                 return response()->json([
-                    'error' => 'Google Books API のクォータを超過しました。.env に GOOGLE_BOOKS_API_KEY を設定してください。'
+                    'error' => 'Google Books API のクォータを超過しました。.env に GOOGLE_BOOKS_API_KEY を設定してください。',
                 ], 429);
             }
 
             // その他のAPIエラー
             if ($response->failed()) {
                 return response()->json([
-                    'error' => 'API通信エラーが発生しました。'
+                    'error' => 'API通信エラーが発生しました。',
                 ], 500);
             }
 
@@ -108,7 +108,7 @@ class BookController extends Controller
             // 該当する書籍がない
             if (empty($data['items'])) {
                 return response()->json([
-                    'error' => '書籍が見つかりませんでした。'
+                    'error' => '書籍が見つかりませんでした。',
                 ], 404);
             }
 
@@ -126,7 +126,7 @@ class BookController extends Controller
 
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'API通信エラーが発生しました。'
+                'error' => 'API通信エラーが発生しました。',
             ], 500);
         }
     }
@@ -220,5 +220,4 @@ class BookController extends Controller
 
         return redirect()->route('books.index')->with('success', '書籍を削除しました');
     }
-
 }

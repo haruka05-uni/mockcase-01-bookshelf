@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ReadingPlan;
-use App\Models\Book;
+use App\Enums\ReadingPlanStatus;
 use App\Http\Requests\StoreReadingPlanRequest;
 use App\Http\Requests\UpdateReadingPlanRequest;
+use App\Models\Book;
+use App\Models\ReadingPlan;
 use Illuminate\Support\Facades\Auth;
-use App\Enums\ReadingPlanStatus;
 
 class ReadingPlanController extends Controller
 {

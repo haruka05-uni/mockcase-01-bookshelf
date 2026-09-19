@@ -2,19 +2,19 @@
 
 namespace Tests\Feature\Advanced;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use App\Models\Book;
 use App\Models\Genre;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\Sanctum;
+use Tests\TestCase;
 
 class SanctumAuthenticationTest extends TestCase
 {
     use RefreshDatabase;
 
-    //----- POST 未認証時に 401 Unauthorizedが返ること。 -----
+    // ----- POST 未認証時に 401 Unauthorizedが返ること。 -----
     public function test_unauthenticated_user_cannot_create_book_via_api(): void
     {
         $genre = Genre::create([
@@ -42,7 +42,7 @@ class SanctumAuthenticationTest extends TestCase
         $response->assertStatus(401);
     }
 
-    //----- PUT 未認証時に 401 Unauthorizedが返ること。 -----
+    // ----- PUT 未認証時に 401 Unauthorizedが返ること。 -----
     public function test_unauthenticated_user_cannot_update_book_via_api(): void
     {
 
@@ -77,13 +77,13 @@ class SanctumAuthenticationTest extends TestCase
             'genres' => [$genre->id],
         ];
 
-        $response = $this->putJson('/api/v1/books/' . $book->id, $updateBookData);
+        $response = $this->putJson('/api/v1/books/'.$book->id, $updateBookData);
 
         $response->assertStatus(401);
 
     }
 
-    //----- DELETE 未認証時に 401 Unauthorizedが返ること。 -----
+    // ----- DELETE 未認証時に 401 Unauthorizedが返ること。 -----
     public function test_unauthenticated_user_cannot_delete_book_via_api(): void
     {
         $genre = Genre::create([
@@ -107,12 +107,12 @@ class SanctumAuthenticationTest extends TestCase
 
         $book->genres()->attach($genre->id);
 
-        $response = $this->deleteJson('/api/v1/books/' . $book->id);
+        $response = $this->deleteJson('/api/v1/books/'.$book->id);
 
         $response->assertStatus(401);
     }
 
-    //----- 他ユーザーが書籍の更新を試みた場合に BookPolicy により 403 Forbidden が返ること。 -----
+    // ----- 他ユーザーが書籍の更新を試みた場合に BookPolicy により 403 Forbidden が返ること。 -----
     public function test_non_owner_cannot_update_book_via_api(): void
     {
         $genre = Genre::create([
@@ -154,12 +154,12 @@ class SanctumAuthenticationTest extends TestCase
 
         Sanctum::actingAs($anotherUser);
 
-        $response = $this->putJson('/api/v1/books/' . $book->id, $updateBookData);
+        $response = $this->putJson('/api/v1/books/'.$book->id, $updateBookData);
 
         $response->assertStatus(403);
     }
 
-    //----- 他ユーザーが書籍の削除を試みた場合に BookPolicy により 403 Forbidden が返ること。 -----
+    // ----- 他ユーザーが書籍の削除を試みた場合に BookPolicy により 403 Forbidden が返ること。 -----
     public function test_non_owner_cannot_delete_book_via_api(): void
     {
         $genre = Genre::create([
@@ -191,7 +191,7 @@ class SanctumAuthenticationTest extends TestCase
 
         $book->genres()->attach($genre->id);
 
-        $response = $this->deleteJson('/api/v1/books/' . $book->id);
+        $response = $this->deleteJson('/api/v1/books/'.$book->id);
 
         $response->assertStatus(403);
     }

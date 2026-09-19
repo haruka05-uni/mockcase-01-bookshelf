@@ -2,19 +2,19 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 use App\Models\Book;
 use App\Models\Review;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
+use Tests\TestCase;
 
 class ReviewTest extends TestCase
 {
     use RefreshDatabase;
 
-    //レビュー投稿
-    //認証ユーザーがレビューを投稿でき、reviewsテーブルにレコードが作成されること。
+    // レビュー投稿
+    // 認証ユーザーがレビューを投稿でき、reviewsテーブルにレコードが作成されること。
     public function test_authenticated_user_can_create_review(): void
     {
         $user = User::create([
@@ -39,7 +39,7 @@ class ReviewTest extends TestCase
             'comment' => '猫の視点から人間社会を描いていて、ユーモアがあって面白かったです。',
         ];
 
-        $response = $this->post('/books/' . $book->id . '/reviews', $reviewData);
+        $response = $this->post('/books/'.$book->id.'/reviews', $reviewData);
         $response->assertRedirect(route('books.show', $book));
 
         $this->assertDatabaseHas('reviews', [
@@ -50,8 +50,8 @@ class ReviewTest extends TestCase
         ]);
     }
 
-    //レビュー投稿
-    //ゲストはログインにリダイレクトされること。
+    // レビュー投稿
+    // ゲストはログインにリダイレクトされること。
     public function test_guest_user_is_redirected_to_login_when_creating_review(): void
     {
         $user = User::create([
@@ -74,14 +74,14 @@ class ReviewTest extends TestCase
             'comment' => '猫の視点から人間社会を描いていて、ユーモアがあって面白かったです。',
         ];
 
-        $response = $this->post('/books/' . $book->id . '/reviews', $reviewData);
+        $response = $this->post('/books/'.$book->id.'/reviews', $reviewData);
         $response->assertRedirect('/login');
 
         $this->assertDatabaseCount('reviews', 0);
     }
 
-    //レビュー投稿
-    //ratingのバリデーション（1〜5の範囲）が動作すること。
+    // レビュー投稿
+    // ratingのバリデーション（1〜5の範囲）が動作すること。
     public function test_rating_must_be_between_1_and_5(): void
     {
         $user = User::create([
@@ -106,13 +106,13 @@ class ReviewTest extends TestCase
             'comment' => '猫の視点から人間社会を描いていて、ユーモアがあって面白かったです。',
         ];
 
-        $response = $this->post('/books/' . $book->id . '/reviews', $reviewData);
+        $response = $this->post('/books/'.$book->id.'/reviews', $reviewData);
 
         $response->assertSessionHasErrors('rating');
     }
 
-    //レビュー編集
-    //レビュー投稿者のみが編集フォームを表示・更新できる。
+    // レビュー編集
+    // レビュー投稿者のみが編集フォームを表示・更新できる。
     public function test_review_owner_can_show_edit_form_and_update_review(): void
     {
         $user = User::create([
@@ -144,10 +144,10 @@ class ReviewTest extends TestCase
             'comment' => '猫の視点から人間社会を描いていて、ユーモアがあって面白かったです。',
         ];
 
-        $response = $this->get('/reviews/' . $review->id . '/edit');
+        $response = $this->get('/reviews/'.$review->id.'/edit');
         $response->assertStatus(200);
 
-        $response = $this->put('/reviews/' . $review->id, $updatedReviewData);
+        $response = $this->put('/reviews/'.$review->id, $updatedReviewData);
         $response->assertRedirect(route('books.show', $book));
 
         $this->assertDatabaseMissing('reviews', [
@@ -164,8 +164,8 @@ class ReviewTest extends TestCase
 
     }
 
-    //レビュー編集
-    //レビュー投稿者以外はレビューを編集できない。403 Forbiddenとなること。
+    // レビュー編集
+    // レビュー投稿者以外はレビューを編集できない。403 Forbiddenとなること。
     public function test_non_owner_cannot_update_review(): void
     {
         $bookOwner = User::create([
@@ -209,7 +209,7 @@ class ReviewTest extends TestCase
             'comment' => 'ユーモアがあって面白かったです。',
         ];
 
-        $response = $this->put('/reviews/' . $review->id, $updatedReviewData);
+        $response = $this->put('/reviews/'.$review->id, $updatedReviewData);
         $response->assertForbidden();
 
         $this->assertDatabaseHas('reviews', [
@@ -218,8 +218,8 @@ class ReviewTest extends TestCase
         ]);
     }
 
-    //レビュー削除
-    //レビュー投稿者のみ削除でき、削除後にレビューが消えること。
+    // レビュー削除
+    // レビュー投稿者のみ削除でき、削除後にレビューが消えること。
     public function test_owner_can_delete_review(): void
     {
         $bookOwner = User::create([
@@ -252,7 +252,7 @@ class ReviewTest extends TestCase
             'comment' => '独特な語り口が印象的で、最後まで楽しく読めました。',
         ]);
 
-        $response = $this->delete('/reviews/' . $review->id);
+        $response = $this->delete('/reviews/'.$review->id);
         $response->assertRedirect(route('books.show', $book));
 
         $this->assertDatabaseMissing('reviews', [
@@ -260,9 +260,8 @@ class ReviewTest extends TestCase
         ]);
     }
 
-
-    //レビュー削除
-    //レビュー投稿者以外はレビューを削除できない。403 Forbiddenとなること。
+    // レビュー削除
+    // レビュー投稿者以外はレビューを削除できない。403 Forbiddenとなること。
     public function test_non_owner_cannot_delete_review(): void
     {
         $bookOwner = User::create([
@@ -301,7 +300,7 @@ class ReviewTest extends TestCase
             'comment' => '独特な語り口が印象的で、最後まで楽しく読めました。',
         ]);
 
-        $response = $this->delete('/reviews/' . $review->id);
+        $response = $this->delete('/reviews/'.$review->id);
         $response->assertForbidden();
 
         $this->assertDatabaseHas('reviews', [

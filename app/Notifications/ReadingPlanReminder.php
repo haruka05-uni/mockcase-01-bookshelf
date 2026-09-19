@@ -2,9 +2,9 @@
 
 namespace App\Notifications;
 
+use App\Models\ReadingPlan;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use App\Models\ReadingPlan;
 
 class ReadingPlanReminder extends Notification
 {
@@ -25,17 +25,13 @@ class ReadingPlanReminder extends Notification
     public function toArray(object $notifiable): array
     {
         $message = match ($this->type) {
-            'three_days_before' =>
-                '「' . $this->readingPlan->book->title . '」の読書期限まであと3日です。',
+            'three_days_before' => '「'.$this->readingPlan->book->title.'」の読書期限まであと3日です。',
 
-            'on_due_date' =>
-                '「' . $this->readingPlan->book->title . '」の読書期限は今日です。',
+            'on_due_date' => '「'.$this->readingPlan->book->title.'」の読書期限は今日です。',
 
-            'three_days_after' =>
-                '「' . $this->readingPlan->book->title . '」の読書期限から3日経過しています。',
+            'three_days_after' => '「'.$this->readingPlan->book->title.'」の読書期限から3日経過しています。',
 
-            default =>
-                '「' . $this->readingPlan->book->title . '」の読書期限のお知らせです。',
+            default => '「'.$this->readingPlan->book->title.'」の読書期限のお知らせです。',
         };
 
         return [

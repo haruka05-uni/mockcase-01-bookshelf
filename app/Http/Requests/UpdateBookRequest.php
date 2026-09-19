@@ -4,12 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+
 class UpdateBookRequest extends FormRequest
 {
     public function authorize(): bool
     {
         return true;
     }
+
     public function rules(): array
     {
         return [
@@ -18,7 +20,7 @@ class UpdateBookRequest extends FormRequest
             'isbn' => [
                 'nullable',
                 'digits:13',
-                Rule::unique('books', 'isbn')->ignore($this->route('book'))
+                Rule::unique('books', 'isbn')->ignore($this->route('book')),
             ],
             'published_date' => 'nullable|date',
             'description' => 'nullable|string|max:255',

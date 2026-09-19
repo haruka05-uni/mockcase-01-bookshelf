@@ -48,6 +48,4 @@ class Book extends Model
     {
         return $this->hasOne(ReadingPlan::class);
     }
-
-
 }

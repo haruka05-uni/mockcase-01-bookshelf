@@ -2,20 +2,19 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 use App\Models\Book;
 use App\Models\Review;
-
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
+use Tests\TestCase;
 
 class RankingTest extends TestCase
 {
     use RefreshDatabase;
 
-    //ランキング表示
-    //ランキングページ（/ranking）が正常に表示され、レビューのある書籍タイトルが含まれること。
+    // ランキング表示
+    // ランキングページ（/ranking）が正常に表示され、レビューのある書籍タイトルが含まれること。
     public function test_ranking_page_displays_book_with_reviews(): void
     {
         $user = User::create([
@@ -45,9 +44,8 @@ class RankingTest extends TestCase
         $response->assertSee('吾輩は猫である');
     }
 
-
-    //ランキング順序
-    //書籍が平均評価の降順で正しく並ぶこと。
+    // ランキング順序
+    // 書籍が平均評価の降順で正しく並ぶこと。
     public function test_books_are_ranked_by_average_rating_in_descending_order(): void
     {
         $user = User::create([

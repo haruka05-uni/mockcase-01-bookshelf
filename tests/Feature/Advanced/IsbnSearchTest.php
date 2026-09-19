@@ -2,15 +2,14 @@
 
 namespace Tests\Feature\Advanced;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-use Illuminate\Support\Facades\Http;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
+use Tests\TestCase;
 
 class IsbnSearchTest extends TestCase
 {
-
     use RefreshDatabase;
 
     // ----- Http::fake()で外部APIをモック化し、正常に書籍情報が返ること。 -----
@@ -44,7 +43,7 @@ class IsbnSearchTest extends TestCase
 
         $isbn = '9784101010014';
 
-        $response = $this->get('/books/isbn/' . $isbn);
+        $response = $this->get('/books/isbn/'.$isbn);
 
         $response->assertStatus(200);
 
@@ -70,7 +69,7 @@ class IsbnSearchTest extends TestCase
 
         $isbn = '00000000';
 
-        $response = $this->get('/books/isbn/' . $isbn);
+        $response = $this->get('/books/isbn/'.$isbn);
 
         $response->assertStatus(400);
     }
@@ -94,7 +93,7 @@ class IsbnSearchTest extends TestCase
 
         $isbn = '9784101010014';
 
-        $response = $this->get('/books/isbn/' . $isbn);
+        $response = $this->get('/books/isbn/'.$isbn);
 
         $response->assertStatus(404);
 
@@ -120,7 +119,7 @@ class IsbnSearchTest extends TestCase
 
         $isbn = '9784101010014';
 
-        $response = $this->get('/books/isbn/' . $isbn);
+        $response = $this->get('/books/isbn/'.$isbn);
 
         $response->assertStatus(500);
 

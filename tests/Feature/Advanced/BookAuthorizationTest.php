@@ -2,18 +2,18 @@
 
 namespace Tests\Feature\Advanced;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 use App\Models\Book;
 use App\Models\Genre;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
+use Tests\TestCase;
 
 class BookAuthorizationTest extends TestCase
 {
     use RefreshDatabase;
 
-    //----- 書籍所有者は書籍を更新できる権限を持っていること -----
+    // ----- 書籍所有者は書籍を更新できる権限を持っていること -----
     public function test_book_owner_can_update_book(): void
     {
         $bookOwner = User::create([
@@ -60,7 +60,7 @@ class BookAuthorizationTest extends TestCase
 
         $book->genres()->attach($genre->id);
 
-        $response = $this->get('/books/' . $book->id . '/edit');
+        $response = $this->get('/books/'.$book->id.'/edit');
         $response->assertStatus(200);
 
         // Viewに渡されたデータを取り出す

@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\BookIndexRequest;
 use App\Http\Requests\Api\BookStoreRequest;
-use App\Models\Book;
+use App\Http\Requests\Api\BookUpdateRequest;
 use App\Http\Resources\BookIndexCollection;
 use App\Http\Resources\BookShowResource;
 use App\Http\Resources\BookStoreResource;
-use App\Http\Requests\Api\BookUpdateRequest;
+use App\Models\Book;
 
 class BookController extends Controller
 {
@@ -21,14 +21,14 @@ class BookController extends Controller
             ->withAvg('reviews', 'rating')
             ->withCount('reviews');
 
-        if (!empty($validated['keyword'])) {
+        if (! empty($validated['keyword'])) {
             $query->where(function ($query) use ($validated) {
-                $query->where('title', 'like', '%' . $validated['keyword'] . '%')
-                    ->orwhere('author', 'like', '%' . $validated['keyword'] . '%');
+                $query->where('title', 'like', '%'.$validated['keyword'].'%')
+                    ->orwhere('author', 'like', '%'.$validated['keyword'].'%');
             });
         }
 
-        if (!empty($validated['genres'])) {
+        if (! empty($validated['genres'])) {
             $query->whereHas('genres', function ($query) use ($validated) {
                 $query->where('genres.id', $validated['genres']);
             });
@@ -93,7 +93,7 @@ class BookController extends Controller
 
     }
 
-    public function destroy(book $book)
+    public function destroy(Book $book)
     {
         $this->authorize('delete', $book);
 

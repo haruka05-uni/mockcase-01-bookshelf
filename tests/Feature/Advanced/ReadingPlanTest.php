@@ -2,20 +2,20 @@
 
 namespace Tests\Feature\Advanced;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
+use App\Enums\ReadingPlanStatus;
 use App\Models\Book;
 use App\Models\ReadingPlan;
+use App\Models\User;
 use App\Notifications\ReadingPlanReminder;
-use App\Enums\ReadingPlanStatus;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
+use Tests\TestCase;
 
 class ReadingPlanTest extends TestCase
 {
     use RefreshDatabase;
 
-    //----- 認証ユーザーが計画を作成出来る。 -----
+    // ----- 認証ユーザーが計画を作成出来る。 -----
     public function test_authenticated_user_can_create_reading_plan(): void
     {
         $user = User::create([
@@ -52,7 +52,7 @@ class ReadingPlanTest extends TestCase
         ]);
     }
 
-    //----- 認証ユーザーが計画を編集出来る。 -----
+    // ----- 認証ユーザーが計画を編集出来る。 -----
     public function test_owner_can_update_reading_plan(): void
     {
         $user = User::create([
@@ -86,7 +86,7 @@ class ReadingPlanTest extends TestCase
             'target_date' => $updatedTargetDate,
         ];
 
-        $response = $this->put('/reading-plans/' . $readingPlan->id, $updatedReadingPlanData);
+        $response = $this->put('/reading-plans/'.$readingPlan->id, $updatedReadingPlanData);
         $response->assertRedirect('/reading-plans');
 
         $this->assertDatabaseHas('reading_plans', [
@@ -96,7 +96,7 @@ class ReadingPlanTest extends TestCase
         ]);
     }
 
-    //----- 認証ユーザーが計画と通知を削除出来る。 -----
+    // ----- 認証ユーザーが計画と通知を削除出来る。 -----
     public function test_owner_can_delete_reading_plan_and_related_notifications(): void
     {
         $user = User::create([
@@ -134,7 +134,7 @@ class ReadingPlanTest extends TestCase
             'id' => $notification->id,
         ]);
 
-        $response = $this->delete('/reading-plans/' . $readingPlan->id);
+        $response = $this->delete('/reading-plans/'.$readingPlan->id);
         $response->assertRedirect('/reading-plans');
 
         // 計画削除
@@ -148,7 +148,7 @@ class ReadingPlanTest extends TestCase
         ]);
     }
 
-    //----- 他ユーザーによる編集は403 -----
+    // ----- 他ユーザーによる編集は403 -----
     public function test_non_owner_cannot_update_reading_plan(): void
     {
         $user = User::create([
@@ -188,11 +188,11 @@ class ReadingPlanTest extends TestCase
             'target_date' => $updatedTargetDate,
         ];
 
-        $response = $this->put('/reading-plans/' . $readingPlan->id, $updatedReadingPlanData);
+        $response = $this->put('/reading-plans/'.$readingPlan->id, $updatedReadingPlanData);
         $response->assertStatus(403);
     }
 
-    //----- 他ユーザーによる削除は403 -----
+    // ----- 他ユーザーによる削除は403 -----
     public function test_non_owner_cannot_delete_reading_plan(): void
     {
         $user = User::create([
@@ -226,13 +226,12 @@ class ReadingPlanTest extends TestCase
             'target_date' => $targetDate,
         ]);
 
-
-        $response = $this->delete('/reading-plans/' . $readingPlan->id);
+        $response = $this->delete('/reading-plans/'.$readingPlan->id);
         $response->assertStatus(403);
 
     }
 
-    //----- 「読了する」操作 -----
+    // ----- 「読了する」操作 -----
     public function test_owner_can_complete_reading_plan(): void
     {
         $user = User::create([
@@ -260,7 +259,7 @@ class ReadingPlanTest extends TestCase
             'target_date' => $targetDate,
         ]);
 
-        $response = $this->post('/reading-plans/' . $readingPlan->id . '/complete');
+        $response = $this->post('/reading-plans/'.$readingPlan->id.'/complete');
         $response->assertRedirect('/reading-plans');
 
         // status が Completed に更新され completed_at がセットされている。
@@ -272,7 +271,7 @@ class ReadingPlanTest extends TestCase
 
     }
 
-    //----- Expired計画の期限変更 -----
+    // ----- Expired計画の期限変更 -----
     public function test_updating_expired_reading_plan_changes_status_to_in_progress(): void
     {
         $user = User::create([
@@ -313,7 +312,7 @@ class ReadingPlanTest extends TestCase
             'target_date' => $updatedTargetDate,
         ];
 
-        $response = $this->put('/reading-plans/' . $readingPlan->id, $updatedReadingPlanData);
+        $response = $this->put('/reading-plans/'.$readingPlan->id, $updatedReadingPlanData);
         $response->assertRedirect('/reading-plans');
 
         $this->assertDatabaseHas('reading_plans', [
@@ -324,7 +323,7 @@ class ReadingPlanTest extends TestCase
 
     }
 
-    //----- Completed計画の編集アクセスは403 -----
+    // ----- Completed計画の編集アクセスは403 -----
     public function test_completed_reading_plan_cannot_be_edited(): void
     {
         $user = User::create([
@@ -353,7 +352,7 @@ class ReadingPlanTest extends TestCase
             'status' => ReadingPlanStatus::Completed,
         ]);
 
-        $response = $this->get('/reading-plans/' . $readingPlan->id . '/edit');
+        $response = $this->get('/reading-plans/'.$readingPlan->id.'/edit');
         $response->assertStatus(403);
 
         $this->assertDatabaseHas('reading_plans', [

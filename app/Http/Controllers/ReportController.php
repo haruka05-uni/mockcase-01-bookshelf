@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Genre;
-use App\Models\Review;
 use App\Models\ReadingPlan;
+use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
@@ -63,7 +63,6 @@ class ReportController extends Controller
             ->sortByDesc('average_rating')
             ->take(5)
             ->values();
-
 
         $stats = [
             'summary' => [

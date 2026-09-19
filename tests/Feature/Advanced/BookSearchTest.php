@@ -2,13 +2,13 @@
 
 namespace Tests\Feature\Advanced;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 use App\Models\Book;
 use App\Models\Genre;
 use App\Models\Review;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
+use Tests\TestCase;
 
 class BookSearchTest extends TestCase
 {
@@ -41,14 +41,14 @@ class BookSearchTest extends TestCase
             'description' => 'アドラー心理学をもとに、自分らしく生きるための考え方を対話形式で紹介する書籍。',
         ]);
 
-        //書籍タイトルの一部で検索可能。
+        // 書籍タイトルの一部で検索可能。
         $response = $this->get('/books?keyword=吾輩は');
 
         $response->assertStatus(200);
         $response->assertSee('吾輩は猫である');
         $response->assertDontSee('嫌われる勇気');
 
-        //著者名の一部で検索可能。
+        // 著者名の一部で検索可能。
         $response = $this->get('/books?keyword=岸見');
 
         $response->assertStatus(200);
@@ -95,15 +95,15 @@ class BookSearchTest extends TestCase
         $book1->genres()->attach($genre1->id);
         $book2->genres()->attach($genre2->id);
 
-        //ジャンルによる絞り込みができる。
-        $response = $this->get('/books?genre=' . $genre1->id);
+        // ジャンルによる絞り込みができる。
+        $response = $this->get('/books?genre='.$genre1->id);
 
         $response->assertStatus(200);
         $response->assertSee('吾輩は猫である');
         $response->assertDontSee('嫌われる勇気');
 
-        //キーワードと同時に指定した場合は両方の条件を満たす書籍のみが表示される。
-        $response = $this->get('/books?keyword=岸見&genre=' . $genre2->id);
+        // キーワードと同時に指定した場合は両方の条件を満たす書籍のみが表示される。
+        $response = $this->get('/books?keyword=岸見&genre='.$genre2->id);
 
         $response->assertStatus(200);
         $response->assertSee('嫌われる勇気');
@@ -131,7 +131,7 @@ class BookSearchTest extends TestCase
             $book->genres()->attach($genre->id);
         }
 
-        //書籍が10件を超える場合にページネーションされる。
+        // 書籍が10件を超える場合にページネーションされる。
         $response = $this->get('/books');
 
         $response->assertStatus(200);
@@ -141,7 +141,7 @@ class BookSearchTest extends TestCase
 
         // ページ遷移後も検索・ジャンル・ソート条件が維持されること。
         $response = $this->get(
-            '/books?keyword=Laravel&genre=' . $genre->id . '&sort=newest'
+            '/books?keyword=Laravel&genre='.$genre->id.'&sort=newest'
         );
 
         $books = $response->viewData('books');
@@ -153,7 +153,7 @@ class BookSearchTest extends TestCase
 
         $this->assertNotNull($nextPageUrl);
         $this->assertStringContainsString('keyword=Laravel', $nextPageUrl);
-        $this->assertStringContainsString('genre=' . $genre->id, $nextPageUrl);
+        $this->assertStringContainsString('genre='.$genre->id, $nextPageUrl);
         $this->assertStringContainsString('sort=newest', $nextPageUrl);
         $this->assertStringContainsString('page=2', $nextPageUrl);
     }
@@ -226,7 +226,7 @@ class BookSearchTest extends TestCase
             'comment' => '独特な語り口が印象的で、最後まで楽しく読めました。',
         ]);
 
-        //newest：デフォルト
+        // newest：デフォルト
         $response = $this->get('/books');
 
         $response->assertStatus(200);
@@ -237,7 +237,7 @@ class BookSearchTest extends TestCase
             $oldBook->title,
         ]);
 
-        //oldest：登録日の古い順
+        // oldest：登録日の古い順
         $response = $this->get('/books?sort=oldest');
 
         $response->assertStatus(200);
@@ -248,28 +248,27 @@ class BookSearchTest extends TestCase
             $newBook->title,
         ]);
 
-        //title：タイトルの昇順
+        // title：タイトルの昇順
         $response = $this->get('/books?sort=title');
 
         $books = $response->viewData('books');
 
         $this->assertSame([
-            $middleBook->id, //title:Apple
-            $newBook->id, //title:Book
-            $oldBook->id, //title:Charlie
+            $middleBook->id, // title:Apple
+            $newBook->id, // title:Book
+            $oldBook->id, // title:Charlie
         ], $books->pluck('id')->all());
 
-        //rating：評価の降順
+        // rating：評価の降順
         $response = $this->get('/books?sort=rating');
 
         $books = $response->viewData('books');
 
         $this->assertSame([
-            $oldBook->id, //rating:5
-            $middleBook->id, //rating:4
-            $newBook->id, //rating:3
+            $oldBook->id, // rating:5
+            $middleBook->id, // rating:4
+            $newBook->id, // rating:3
         ], $books->pluck('id')->all());
 
     }
-
 }

@@ -2,20 +2,21 @@
 
 namespace Tests\Feature\Advanced;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
+use App\Enums\ReadingPlanStatus;
 use App\Models\Book;
 use App\Models\ReadingPlan;
+use App\Models\User;
 use App\Notifications\ReadingPlanReminder;
-use App\Enums\ReadingPlanStatus;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
+use Tests\TestCase;
 
 class ReadingPlanReminderCommandTest extends TestCase
 {
     use RefreshDatabase;
-    //時刻固定
+
+    // 時刻固定
     protected function setUp(): void
     {
         parent::setUp();
@@ -23,7 +24,7 @@ class ReadingPlanReminderCommandTest extends TestCase
         Carbon::setTestNow('2026-09-18 09:00:00');
     }
 
-    //時刻解除
+    // 時刻解除
     protected function tearDown(): void
     {
         Carbon::setTestNow();
@@ -77,7 +78,7 @@ class ReadingPlanReminderCommandTest extends TestCase
         );
 
         $this->assertSame(
-            '「' . $book->title . '」の読書期限まであと3日です。',
+            '「'.$book->title.'」の読書期限まであと3日です。',
             $notification->data['body']
         );
 
@@ -129,7 +130,7 @@ class ReadingPlanReminderCommandTest extends TestCase
         );
 
         $this->assertSame(
-            '「' . $book->title . '」の読書期限は今日です。',
+            '「'.$book->title.'」の読書期限は今日です。',
             $notification->data['body']
         );
 
@@ -181,7 +182,7 @@ class ReadingPlanReminderCommandTest extends TestCase
         );
 
         $this->assertSame(
-            '「' . $book->title . '」の読書期限から3日経過しています。',
+            '「'.$book->title.'」の読書期限から3日経過しています。',
             $notification->data['body']
         );
 
@@ -304,5 +305,4 @@ class ReadingPlanReminderCommandTest extends TestCase
             'status' => ReadingPlanStatus::InProgress->value,
         ]);
     }
-
 }
