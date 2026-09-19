@@ -21,6 +21,10 @@
 - Google Books API（ISBN検索）
 - PHPUnit（テスト）
 
+## ER図
+<img width="2182" height="769" alt="模擬案件① drawio (3)" src="https://github.com/user-attachments/assets/5a1a50a7-0f3d-4c8d-84be-4ed633014978" />
+
+
 ## 開発環境URL
 
 http://localhost
