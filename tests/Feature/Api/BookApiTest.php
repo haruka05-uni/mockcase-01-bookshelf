@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\Book;
 use App\Models\Genre;
 use App\Models\User;
+use Laravel\Sanctum\Sanctum;
 
 class BookApiTest extends TestCase
 {
@@ -147,6 +148,8 @@ class BookApiTest extends TestCase
             'password' => Hash::make('password'),
         ]);
 
+
+
         $bookData = [
             'user_id' => $user->id,
             'title' => '吾輩は猫である',
@@ -156,6 +159,8 @@ class BookApiTest extends TestCase
             'description' => '猫の視点から人間社会を風刺的に描いた夏目漱石の代表的な小説。',
             'genres' => [$genre->id],
         ];
+
+        Sanctum::actingAs($user);
 
         $response = $this->postJson('/api/v1/books', $bookData);
         $book = Book::first();
@@ -193,6 +198,8 @@ class BookApiTest extends TestCase
             'description' => '猫の視点から人間社会を風刺的に描いた夏目漱石の代表的な小説。',
             'genres' => [],
         ];
+
+        Sanctum::actingAs($user);
 
         $response = $this->postJson('/api/v1/books', $bookData);
 
@@ -234,6 +241,8 @@ class BookApiTest extends TestCase
             'description' => '猫の視点から人間社会を風刺的に描いた夏目漱石の代表的な小説。',
         ]);
 
+        Sanctum::actingAs($user);
+
         $book->genres()->attach($genre->id);
 
         $updateBookData = [
@@ -262,6 +271,14 @@ class BookApiTest extends TestCase
     // 存在しないIDで404が返ること。
     public function test_books_update_not_found_returns_404(): void
     {
+        $user = User::create([
+            'name' => '山田太郎',
+            'email' => 'yamada@example.com',
+            'password' => Hash::make('password'),
+        ]);
+
+        Sanctum::actingAs($user);
+
         $response = $this->putJson('/api/v1/books/99');
 
         $response->assertStatus(404);
@@ -292,6 +309,8 @@ class BookApiTest extends TestCase
             'description' => '猫の視点から人間社会を風刺的に描いた夏目漱石の代表的な小説。',
         ]);
 
+        Sanctum::actingAs($user);
+
         $book->genres()->attach($genre->id);
 
         $response = $this->deleteJson('/api/v1/books/' . $book->id);
@@ -308,6 +327,14 @@ class BookApiTest extends TestCase
     // 存在しないIDで404が返ること。
     public function test_books_delete_not_found_returns_404(): void
     {
+        $user = User::create([
+            'name' => '山田太郎',
+            'email' => 'yamada@example.com',
+            'password' => Hash::make('password'),
+        ]);
+
+        Sanctum::actingAs($user);
+
         $response = $this->deleteJson('/api/v1/books/99');
 
         $response->assertStatus(404);

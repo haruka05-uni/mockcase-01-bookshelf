@@ -19,6 +19,10 @@ class Book extends Model
         'image_url',
     ];
 
+    protected $casts = [
+        'published_date' => 'date',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -44,5 +48,6 @@ class Book extends Model
     {
         return $this->hasOne(ReadingPlan::class);
     }
+
 
 }

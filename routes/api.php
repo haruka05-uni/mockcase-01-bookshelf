@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\BookController;
+use App\Http\Controllers\Api\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,16 +16,31 @@ use App\Http\Controllers\Api\BookController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::prefix('v1')->group(function () {
+
+    Route::post('/login', [AuthController::class, 'login']);
+
+    // 閲覧系
     Route::apiResource('books', BookController::class)
+        ->only(['index', 'show'])
         ->missing(function (Request $request) {
             return response()->json([
                 'message' => '書籍が見つかりませんでした。',
             ], 404);
         });
+
+    // 書き込み系
+    Route::middleware('auth:sanctum')->group(function () {
+
+        Route::apiResource('books', BookController::class)
+            ->only(['store', 'update', 'destroy'])
+            ->missing(function (Request $request) {
+                return response()->json([
+                    'message' => '書籍が見つかりませんでした。',
+                ], 404);
+            });
+
+    });
+
 });
 

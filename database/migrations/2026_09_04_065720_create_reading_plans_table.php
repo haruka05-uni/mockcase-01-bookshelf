@@ -16,10 +16,10 @@ return new class extends Migration {
             $table->foreignId('book_id')->constrained()->onDelete('cascade');
             $table->date('target_date');
             $table->enum('status', [
-                'not_started',
                 'in_progress',
                 'completed',
-            ])->default('not_started');
+                'expired',
+            ])->default('in_progress');
             $table->date('completed_at')->nullable();
             $table->timestamps();
         });

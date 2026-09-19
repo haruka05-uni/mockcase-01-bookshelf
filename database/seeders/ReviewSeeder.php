@@ -51,6 +51,8 @@ class ReviewSeeder extends Seeder
             $reviewUsers = $users->random($reviewCount);
 
             foreach ($reviewUsers as $reviewUser) {
+                $rating = rand(1, 5);
+
                 Review::create([
                     'user_id' => $reviewUser->id,
                     'book_id' => $book->id,
@@ -59,6 +61,5 @@ class ReviewSeeder extends Seeder
                 ]);
             }
         }
-        ;
     }
 }

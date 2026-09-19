@@ -7,11 +7,18 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\RankingController;
 use App\Http\Controllers\ReadingPlanController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\NotificationController;
 
 
 Route::redirect('/', '/books');
 
 Route::middleware('auth')->group(function () {
+
+    // ISBN検索
+    Route::get('/books/isbn/{isbn}', [BookController::class, 'isbnSearch'])
+        ->name('books.isbn-search');
+
     //書籍関連
     Route::resource('books', BookController::class)
         ->only(['create', 'store', 'edit', 'update', 'destroy']);
@@ -34,7 +41,21 @@ Route::middleware('auth')->group(function () {
     Route::post('/reviews/{review}/like', [ReviewController::class, 'like'])->name('reviews.like');
 
     //書籍計画関連
-    Route::resource('reading-Plans', ReadingPlanController::class);
+    Route::resource('reading-plans', ReadingPlanController::class);
+
+    Route::post(
+        '/reading-plans/{readingPlan}/complete',
+        [ReadingPlanController::class, 'complete']
+    )->name('reading-plans.complete');
+
+    //マイ読書レポート
+    Route::get('/reports', [ReportController::class, 'report'])->name('reports.index');
+
+    //通知関連
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+
+    Route::post('/notifications/{notificationId}/read', [NotificationController::class, 'read'])->name('notifications.read');
+
 });
 
 Route::resource('books', BookController::class)

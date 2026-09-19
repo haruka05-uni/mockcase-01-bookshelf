@@ -7,6 +7,7 @@ use App\Models\Book;
 use App\Http\Requests\StoreReadingPlanRequest;
 use App\Http\Requests\UpdateReadingPlanRequest;
 use Illuminate\Support\Facades\Auth;
+use App\Enums\ReadingPlanStatus;
 
 class ReadingPlanController extends Controller
 {
@@ -14,11 +15,16 @@ class ReadingPlanController extends Controller
     {
         $user = Auth::user();
 
+        $currentStatus = request('status');
+
         $readingPlans = ReadingPlan::with('book')
             ->where('user_id', $user->id)
+            ->when($currentStatus, function ($query) use ($currentStatus) {
+                $query->where('status', $currentStatus);
+            })
             ->get();
 
-        return view('reading-plans.index', compact('readingPlans'));
+        return view('reading-plans.index', compact('readingPlans', 'currentStatus'));
     }
 
     public function create()
@@ -57,6 +63,10 @@ class ReadingPlanController extends Controller
 
         $validated = $request->validated();
 
+        if ($readingPlan->status === ReadingPlanStatus::Expired) {
+            $validated['status'] = ReadingPlanStatus::InProgress;
+        }
+
         $readingPlan->update($validated);
 
         return redirect()->route('reading-plans.index')->with('success', '読書計画を更新しました。');
@@ -68,6 +78,23 @@ class ReadingPlanController extends Controller
 
         $readingPlan->delete();
 
+        // この読書計画に関係する通知を削除
+        $readingPlan->user->notifications()
+            ->where('data->reading_plan_id', $readingPlan->id)
+            ->delete();
+
         return redirect()->route('reading-plans.index')->with('success', '読書計画を削除しました。');
+    }
+
+    public function complete(ReadingPlan $readingPlan)
+    {
+        $readingPlan->update([
+            'status' => ReadingPlanStatus::Completed,
+            'completed_at' => today(),
+        ]);
+
+        return redirect()
+            ->route('reading-plans.index')
+            ->with('success', '読了しました。');
     }
 }
